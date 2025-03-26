@@ -15,7 +15,8 @@ from datetime import datetime
 
 # ===== BASE PATHS =====
 # Base directory for all outputs
-OUTPUT_DIR = r"C:\Users\nikun\Desktop\MLPR\AI_Energy-Load\OUTPUT_DIR"
+# Update to use the current project directory
+OUTPUT_DIR = r"C:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\OUTPUT_DIR"
 
 # ===== DIRECTORY STRUCTURE WITH DESCRIPTIONS =====
 DIRECTORIES = {
@@ -55,6 +56,23 @@ DIRECTORIES = {
     },
     "model_evaluation": {
         "": "Model evaluation results, metrics, and performance visualizations"
+    },
+    
+    # Add new directories specific to energy load forecasting
+    "predictions": {
+        "": "Model predictions and forecasts",
+        "daily": "Daily energy load predictions",
+        "weekly": "Weekly energy load predictions"
+    },
+    "logs": {
+        "": "Training logs and monitoring data",
+        "tensorboard": "TensorBoard visualization files"
+    },
+    "feature_engineering": {
+        "": "Feature extraction and selection outputs"
+    },
+    "deployment": {
+        "": "Model deployment artifacts and configuration"
     }
 }
 
@@ -72,12 +90,27 @@ PATHS = {
     # New paths for model training
     "SPLIT_DATA_DIR": os.path.join(OUTPUT_DIR, "split_data"),
     "MODELS_DIR": os.path.join(OUTPUT_DIR, "models"),
-    "MODEL_EVAL_DIR": os.path.join(OUTPUT_DIR, "model_evaluation")
+    "MODEL_EVAL_DIR": os.path.join(OUTPUT_DIR, "model_evaluation"),
+    
+    # Add new paths for additional directories
+    "PREDICTIONS_DIR": os.path.join(OUTPUT_DIR, "predictions"),
+    "DAILY_PREDICTIONS_DIR": os.path.join(OUTPUT_DIR, "predictions", "daily"),
+    "WEEKLY_PREDICTIONS_DIR": os.path.join(OUTPUT_DIR, "predictions", "weekly"),
+    "LOGS_DIR": os.path.join(OUTPUT_DIR, "logs"),
+    "TENSORBOARD_DIR": os.path.join(OUTPUT_DIR, "logs", "tensorboard"),
+    "FEATURE_ENGINEERING_DIR": os.path.join(OUTPUT_DIR, "feature_engineering"),
+    "DEPLOYMENT_DIR": os.path.join(OUTPUT_DIR, "deployment")
 }
 
 # Specific file paths
 PARSED_DATA_PATH = os.path.join(PATHS["PROCESSED_DIR"], "processed_gkg_parsed_data.csv")
 AGGREGATED_15MIN_PATH = os.path.join(PATHS["AGGREGATED_DIR"], "aggregated_gkg_15min.csv")
+
+# Add specific model file paths
+MODEL_CHECKPOINT_PATH = os.path.join(PATHS["MODELS_DIR"], "best_model_checkpoint.h5")
+SCALER_PATH = os.path.join(PATHS["MODELS_DIR"], "feature_scaler.pkl")
+FEATURE_IMPORTANCE_PATH = os.path.join(PATHS["FEATURE_ENGINEERING_DIR"], "feature_importance.csv")
+PREDICTIONS_OUTPUT_PATH = os.path.join(PATHS["PREDICTIONS_DIR"], "energy_load_predictions.csv")
 
 # ===== GDELT SETTINGS =====
 # Date range for data collection
@@ -103,6 +136,20 @@ THEME_CATEGORIES = {
     'Social': ['SOCIAL', 'PROTEST', 'RALLY', 'CELEBR', 'FESTIVAL', 'COMMUNITY', 'SOCIETY', 'PUBLIC', 'CITIZEN'],
     'Environment': ['ENV', 'CLIMATE', 'WEATHER', 'POLLUT', 'WATER', 'GREEN', 'ECOLOGY', 'TEMPERATURE'],
     'Education': ['EDU', 'SCHOOL', 'UNIVERSITY', 'STUDENT', 'LEARNING', 'COLLEGE', 'TEACHER', 'PROFESSOR']
+}
+
+# ===== ENERGY LOAD FORECASTING SETTINGS =====
+# Forecasting configuration
+FORECAST_HORIZON = 24  # Hours to forecast ahead
+INPUT_WINDOW = 168     # Hours of history to use as input
+RETRAIN_FREQUENCY = 7  # Days between model retraining
+
+# Feature groups for energy load forecasting
+FEATURE_GROUPS = {
+    'Temporal': ['hour', 'day_of_week', 'month', 'is_holiday', 'is_weekend'],
+    'Weather': ['temperature', 'humidity', 'wind_speed', 'precipitation'],
+    'Historical': ['load_lag_24h', 'load_lag_48h', 'load_lag_168h'],
+    'Energy': ['solar_generation', 'wind_generation']
 }
 
 # ===== DIRECTORY MANAGEMENT FUNCTIONS =====

@@ -9,11 +9,16 @@ from tqdm import tqdm
 import time
 import hashlib
 import re
+import sys
+
+# Add parent directory to path to ensure we can import config properly
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import our centralized configuration - IMPROVED IMPORTS
 from config import (
     PATHS, LOCATION_FILTER, TIMEOUT, MAX_WORKERS, START_DATE as CONFIG_START_DATE, 
-    END_DATE as CONFIG_END_DATE, setup_and_verify, test_directory_writing
+    END_DATE as CONFIG_END_DATE, setup_and_verify, test_directory_writing,
+    FEATURE_GROUPS, FORECAST_HORIZON, INPUT_WINDOW  # Added new imports from config
 )
 
 """
@@ -37,13 +42,30 @@ RAW_DATA_DIR = PATHS["RAW_DATA_DIR"]
 BATCH_DIR = PATHS["BATCH_DIR"]
 CACHE_DIR = PATHS["CACHE_DIR"]
 OUTPUT_DIR = PATHS["BASE_DIR"]
+PROCESSED_DIR = PATHS["PROCESSED_DIR"]  # Added for easier access to processed data directory
 
 # Default filename for single file processing
-OUTPUT_FILENAME = "delhi_gkg_data_full.csv"
+OUTPUT_FILENAME = f"{LOCATION_FILTER.lower()}_gkg_data_full.csv"
 
 # Initialize global variables (will be set during batch processing)
 START_DATE = CONFIG_START_DATE
 END_DATE = CONFIG_END_DATE
+
+# Log file path for tracking progress
+LOG_FILE = os.path.join(PATHS["LOGS_DIR"], "gdelt_data_gathering.log")
+
+def log_message(message):
+    """Log message to file and print to console"""
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_entry = f"[{timestamp}] {message}"
+    print(log_entry)
+    
+    # Ensure log directory exists
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+    
+    # Append to log file
+    with open(LOG_FILE, 'a') as f:
+        f.write(log_entry + '\n')
 
 def get_cache_path(url):
     """Generate a cache file path for a URL"""

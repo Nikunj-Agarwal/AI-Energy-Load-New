@@ -4,10 +4,15 @@ from datetime import datetime
 import os
 import glob
 from tqdm import tqdm
+import sys
+
+# Add parent directory to path to ensure we can import config properly
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import from config file
 from config import (
-    PATHS, THEME_CATEGORIES, setup_and_verify, test_directory_writing as config_test_directory_writing
+    PATHS, THEME_CATEGORIES, setup_and_verify, FEATURE_GROUPS, FORECAST_HORIZON, 
+    INPUT_WINDOW, MODEL_CHECKPOINT_PATH, PARSED_DATA_PATH
 )
 
 #==============================
@@ -16,12 +21,15 @@ from config import (
 
 # File paths from config
 INPUT_FILE_PATH = os.path.join(PATHS["RAW_DATA_DIR"], "delhi_gkg_data_2021_jan1_3.csv")
-OUTPUT_FILE_PATH = os.path.join(PATHS["PROCESSED_DIR"], "processed_gkg_parsed_data.csv")
+OUTPUT_FILE_PATH = PARSED_DATA_PATH  # Use predefined path from config
 
 # Batch processing settings
 BATCH_DIR = PATHS["BATCH_DIR"]
 MERGED_OUTPUT_PATH = os.path.join(PATHS["PROCESSED_DIR"], "merged_delhi_gkg_data.csv")
 PROCESS_BATCHES = True  # Set to True to process batch files instead of single file
+
+# Log file path for tracking progress
+LOG_FILE = os.path.join(PATHS["LOGS_DIR"], "gdelt_data_sparsing.log")
 
 # Processing options
 SAMPLE_SIZE = None  # Set to None for full dataset processing

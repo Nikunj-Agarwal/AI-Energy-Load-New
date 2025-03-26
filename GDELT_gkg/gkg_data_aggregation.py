@@ -5,21 +5,40 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
 import os
+import sys
 
-# Import configuration - ADDED IMPORT FROM CONFIG FILE
+# Add parent directory to path to ensure we can import config properly
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import configuration - UPDATED IMPORTS FOR CURRENT CONFIG
 from config import (
-    PATHS, setup_and_verify, test_directory_writing as config_test_directory_writing
+    PATHS, setup_and_verify, test_directory_writing as config_test_directory_writing,
+    THEME_CATEGORIES, FEATURE_GROUPS, FORECAST_HORIZON, INPUT_WINDOW
 )
 
 # Use paths from config instead of hardcoded paths - IMPROVED PATH USAGE
 INPUT_PATH = os.path.join(PATHS["PROCESSED_DIR"], "processed_gkg_parsed_data.csv")
 OUTPUT_PATH = os.path.join(PATHS["AGGREGATED_DIR"], "aggregated_gkg_15min.csv")
 FIGURES_DIR = PATHS["FIGURES_DIR"]
+LOG_FILE = os.path.join(PATHS["LOGS_DIR"], "gdelt_data_aggregation.log")
 
 # Define key theme categories most likely to affect energy load
 # Updated to match categories used in sparsing.py
 ENERGY_THEMES = ['Energy', 'Environment', 'Infrastructure', 'Social', 'Health', 
                 'Political', 'Economic']  # Added more relevant themes
+
+def log_message(message):
+    """Log message to file and print to console"""
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_entry = f"[{timestamp}] {message}"
+    print(log_entry)
+    
+    # Ensure log directory exists
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+    
+    # Append to log file
+    with open(LOG_FILE, 'a') as f:
+        f.write(log_entry + '\n')
 
 def validate_input_data(df, required_columns=None):
     """Validate that input data has required columns for aggregation"""

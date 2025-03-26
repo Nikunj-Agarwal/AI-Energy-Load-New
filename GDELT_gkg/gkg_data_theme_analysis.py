@@ -26,11 +26,16 @@ from pathlib import Path
 from datetime import datetime
 import glob
 from tqdm import tqdm
+import sys
 
-# IMPROVED: Import from config file
+# Add parent directory to path to ensure we can import config properly
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import configuration - UPDATED IMPORTS FOR CURRENT CONFIG
 from config import (
     PATHS, THEME_CATEGORIES as CONFIG_THEME_CATEGORIES, 
-    setup_and_verify, test_directory_writing as config_test_directory_writing
+    setup_and_verify, test_directory_writing as config_test_directory_writing,
+    FEATURE_GROUPS, FORECAST_HORIZON, INPUT_WINDOW  # Added additional imports
 )
 
 #============================================================
