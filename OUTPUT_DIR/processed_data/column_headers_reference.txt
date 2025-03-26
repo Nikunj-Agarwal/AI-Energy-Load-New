@@ -1,0 +1,91 @@
+# Column Headers Reference - Generated on 2025-03-26 20:36:07.333166
+# Total columns: 79
+
+## Core columns
+- GKGRECORDID
+- DATE
+- SourceCollectionIdentifier
+- SourceCommonName
+- DocumentIdentifier
+- Counts
+- V2Counts
+- Themes
+- V2Themes
+- Locations
+- V2Locations
+- Persons
+- V2Persons
+- Organizations
+- V2Organizations
+- V2Tone
+- Dates
+- GCAM
+- SharingImage
+- RelatedImages
+- SocialImageEmbeds
+- SocialVideoEmbeds
+- Quotations
+- AllNames
+- Amounts
+- TranslationInfo
+- Extras
+- datetime
+- avg_amount
+- max_amount
+- amount_count
+- article_count
+- energy_impact_score
+- energy_amount
+- infrastructure_amount
+- environment_amount
+- dominant_theme
+
+## Theme columns
+- theme_categories
+- theme_Political
+- theme_Political_importance
+- theme_Economic
+- theme_Economic_importance
+- theme_Religious
+- theme_Religious_importance
+- theme_Energy
+- theme_Energy_importance
+- theme_Infrastructure
+- theme_Infrastructure_importance
+- theme_Health
+- theme_Health_importance
+- theme_Social
+- theme_Social_importance
+- theme_Environment
+- theme_Environment_importance
+- theme_Education
+- theme_Education_importance
+- theme_categories_theme_Economic_combo
+- theme_categories_theme_Economic_importance_combo
+- theme_Economic_theme_Economic_importance_combo
+- theme_categories_theme_Political_combo
+- theme_categories_theme_Political_importance_combo
+- theme_Political_theme_Political_importance_combo
+- theme_Political_theme_Economic_combo
+- theme_Political_theme_Economic_importance_combo
+- theme_Political_importance_theme_Economic_combo
+- theme_Political_importance_theme_Economic_importance_combo
+- theme_dominance_strength
+
+## Tone metrics
+- tone_tone
+- tone_positive
+- tone_negative
+- tone_polarity
+- tone_activity
+- tone_self_ref
+
+## Entity metrics
+- entity_count
+- entity_variety
+
+## Parsed data columns
+- parsed_themes
+- parsed_tone
+- parsed_counts
+- parsed_amounts

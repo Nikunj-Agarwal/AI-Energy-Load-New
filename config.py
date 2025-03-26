@@ -112,6 +112,10 @@ SCALER_PATH = os.path.join(PATHS["MODELS_DIR"], "feature_scaler.pkl")
 FEATURE_IMPORTANCE_PATH = os.path.join(PATHS["FEATURE_ENGINEERING_DIR"], "feature_importance.csv")
 PREDICTIONS_OUTPUT_PATH = os.path.join(PATHS["PREDICTIONS_DIR"], "energy_load_predictions.csv")
 
+# Add path for feature engineering outputs
+PATHS["FEATURE_ENGINEERING_DIR"] = os.path.join(OUTPUT_DIR, "feature_engineering")
+PATHS["ENHANCED_FEATURES_PATH"] = os.path.join(PATHS["FEATURE_ENGINEERING_DIR"], "enhanced_features.csv")
+
 # ===== GDELT SETTINGS =====
 # Date range for data collection
 START_DATE = datetime(2021, 1, 1)
@@ -138,6 +142,19 @@ THEME_CATEGORIES = {
     'Education': ['EDU', 'SCHOOL', 'UNIVERSITY', 'STUDENT', 'LEARNING', 'COLLEGE', 'TEACHER', 'PROFESSOR']
 }
 
+# After other configuration variables
+
+# Define key theme categories most likely to affect energy load
+ENERGY_THEMES = [
+    'Energy', 
+    'Environment', 
+    'Infrastructure', 
+    'Social', 
+    'Health', 
+    'Political', 
+    'Economic'
+]
+
 # ===== ENERGY LOAD FORECASTING SETTINGS =====
 # Forecasting configuration
 FORECAST_HORIZON = 24  # Hours to forecast ahead
@@ -150,6 +167,46 @@ FEATURE_GROUPS = {
     'Weather': ['temperature', 'humidity', 'wind_speed', 'precipitation'],
     'Historical': ['load_lag_24h', 'load_lag_48h', 'load_lag_168h'],
     'Energy': ['solar_generation', 'wind_generation']
+}
+
+# ===== FEATURE ENGINEERING SETTINGS =====
+FEATURE_ENGINEERING = {
+    # Theme intensity settings
+    "theme_intensity": {
+        "high_threshold": 0.75,  # Percentile threshold for "high" coverage
+        "very_high_threshold": 0.90,  # Percentile threshold for "very high" coverage
+        "volatility_window": 4,  # Window size for volatility calculation
+    },
+    
+    # Theme evolution settings
+    "theme_evolution": {
+        "momentum_window": 4,  # Window for calculating momentum
+        "acceleration_window": 8,  # Window for calculating acceleration
+    },
+    
+    # Temporal effects settings
+    "temporal_effects": {
+        "decay_rates": {
+            "fast": 0.2,  # Fast decay rate for short-lived effects
+            "medium": 0.1,  # Medium decay rate
+            "slow": 0.05,  # Slow decay rate for sustained effects
+        },
+        "lag_periods": [1, 2, 4, 8, 24]  # Time lags to calculate
+    },
+    
+    # Theme co-occurrence settings
+    "theme_cooccurrence": {
+        "max_combinations": 10,  # Maximum number of theme combinations to track
+        "min_occurrence": 5,  # Minimum occurrences to include a combination
+    },
+    
+    # Process control - which modules to apply during aggregation
+    "process_control": {
+        "theme_intensity": True,
+        "theme_evolution": True,
+        "theme_cooccurrence": True, 
+        "temporal_effects": True
+    }
 }
 
 # ===== DIRECTORY MANAGEMENT FUNCTIONS =====

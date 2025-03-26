@@ -1,0 +1,16 @@
+Merge Summary
+=============
+
+Date: 2025-03-27 01:50:35
+
+GKG data shape: (138432, 43)
+Weather data shape: (131572, 12)
+Merged data shape: (131572, 56)
+
+Date range: 2021-01-01 00:30:00 to 2024-12-12 00:30:00
+
+Feature counts:
+  News features: 17
+  Weather features: 3
+  Energy features: 1
+  Other features: 35

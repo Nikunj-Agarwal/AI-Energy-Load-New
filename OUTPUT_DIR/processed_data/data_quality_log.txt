@@ -1,0 +1,50 @@
+GDELT Data Quality Report - 2025-03-26 21:08:08.880496
+================================================================================
+
+Date Range: 2021-01-01 00:00:00 to 2021-02-18 11:45:00
+
+Total Records: 100000
+
+Missing Values:
+  SourceCommonName: 33 (0.03%)
+  Counts: 75763 (75.76%)
+  V2Counts: 75763 (75.76%)
+  Themes: 4467 (4.47%)
+  V2Themes: 4468 (4.47%)
+  V2Locations: 1 (0.00%)
+  Persons: 20675 (20.67%)
+  V2Persons: 21029 (21.03%)
+  Organizations: 13731 (13.73%)
+  V2Organizations: 17472 (17.47%)
+  Dates: 29979 (29.98%)
+  SharingImage: 19451 (19.45%)
+  RelatedImages: 94804 (94.80%)
+  SocialImageEmbeds: 96021 (96.02%)
+  SocialVideoEmbeds: 23565 (23.57%)
+  Quotations: 77808 (77.81%)
+  AllNames: 494 (0.49%)
+  Amounts: 20064 (20.06%)
+  TranslationInfo: 100000 (100.00%)
+  dominant_theme: 4972 (4.97%)
+  theme_dominance_strength: 4972 (4.97%)
+
+Theme Distribution:
+  Political: 748557 (748.56%)
+  Economic: 1607744 (1607.74%)
+  Religious: 7455 (7.46%)
+  Energy: 31948 (31.95%)
+  Infrastructure: 147538 (147.54%)
+  Health: 776848 (776.85%)
+  Social: 176319 (176.32%)
+  Environment: 80997 (81.00%)
+  Education: 82766 (82.77%)
+
+Tone Statistics:
+  Average Tone: -1.3333
+  Tone Range: -23.5294 to 21.1180
+  Most Positive: 21.7391
+  Most Negative: 23.5294
+
+Potential Anomalies:
+  Records with extreme tone (>10): 995
+  Records with no themes detected: 4972

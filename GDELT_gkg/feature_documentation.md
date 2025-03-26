@@ -6,7 +6,7 @@
 |---------|-------------|-------------------|--------------|
 | `article_count` | Total number of articles in 15-min interval | Count of GKGRECORDID | Measures overall news volume |
 | `article_count_change` | Change from previous interval | Current count - previous count | Indicates news activity acceleration |
-| `article_volume_spike` | Flag for unusual activity | 1 if count > 1.5x rolling 3hr average | Identifies news bursts |
+| `article_volume_spike` | Flag for unusual activity | 1 if count > 2 standard deviations above mean | Identifies significant news bursts |
 | `prev_article_count` | Previous interval's count | Shifted article_count | Used for change calculation |
 
 ## Theme Presence Features
@@ -55,6 +55,19 @@
 | `political_crisis_indicator` | Political crisis level | theme_Political_sum * tone_negative_max | Political instability |
 | `economic_impact_indicator` | Economic disruption | theme_Economic_sum * tone_volatility | Market/economic instability |
 
+## Theme Interaction Features
+
+| Feature | Description | Calculation Method | Significance |
+|---------|-------------|-------------------|--------------|
+| `Energy_Economic_interaction` | Energy-Economy relationship | theme_Energy_sum * theme_Economic_sum | Energy market impacts |
+| `Energy_Political_interaction` | Energy-Political relationship | theme_Energy_sum * theme_Political_sum | Energy policy coverage |
+| `Energy_Environment_interaction` | Energy-Environment relationship | theme_Energy_sum * theme_Environment_sum | Clean energy, climate stories |
+| `Energy_Infrastructure_interaction` | Energy-Infrastructure relationship | theme_Energy_sum * theme_Infrastructure_sum | Grid issues, energy facilities |
+| `Energy_negative_impact` | Negative energy news | theme_Energy_sum * tone_negative_max | Energy problems, crises |
+| `Energy_volatility_impact` | Energy news volatility | theme_Energy_sum * tone_volatility | Energy market/supply uncertainty |
+| `Energy_vs_Economic_ratio` | Energy relative to economy | theme_Energy_sum / (theme_Economic_sum + 0.1) | Energy focus vs economic news |
+| `Energy_vs_Political_ratio` | Energy relative to politics | theme_Energy_sum / (theme_Political_sum + 0.1) | Energy focus vs political news |
+
 ## Time Context Features
 
 | Feature | Description | Calculation Method | Significance |
@@ -67,3 +80,31 @@
 | `day` | Day of month (1-31) | time_bucket.day | Monthly patterns |
 | `hour_sin`, `hour_cos` | Cyclical hour encoding | sin/cos transforms | Circular time patterns |
 | `day_of_week_sin`, `day_of_week_cos` | Cyclical day encoding | sin/cos transforms | Circular weekly patterns |
+
+## Temporal Effect Features
+
+| Feature | Description | Calculation Method | Significance |
+|---------|-------------|-------------------|--------------|
+| `theme_Energy_lag1` | Energy theme 15min lag | theme_Energy_sum shifted 1 period | Very recent energy news |
+| `theme_Energy_lag4` | Energy theme 1hr lag | theme_Energy_sum shifted 4 periods | Energy news from past hour |
+| `theme_Energy_lag12` | Energy theme 3hr lag | theme_Energy_sum shifted 12 periods | Energy news from past 3 hours |
+| `theme_Energy_lag24` | Energy theme 6hr lag | theme_Energy_sum shifted 24 periods | Energy news from past 6 hours |
+| `theme_Energy_lag1_slow_decay` | Energy theme with slow decay | lag feature * exp(-0.01*lag) | Slowly diminishing impact |
+| `theme_Energy_lag1_medium_decay` | Energy theme with medium decay | lag feature * exp(-0.05*lag) | Medium diminishing impact |
+| `theme_Energy_lag1_fast_decay` | Energy theme with fast decay | lag feature * exp(-0.1*lag) | Quickly diminishing impact |
+| `theme_Energy_ewma_fast` | Energy 1hr moving average | 4-period EWM | Short-term momentum (1hr) |
+| `theme_Energy_ewma_medium` | Energy 6hr moving average | 24-period EWM | Medium-term momentum (6hr) |
+| `theme_Energy_ewma_slow` | Energy 24hr moving average | 96-period EWM | Long-term momentum (24hr) |
+| `theme_Energy_memory_effect` | Cumulative negative energy news | Decaying sum of negative energy news | Lingering effects of crises |
+| `theme_Energy_memory_interaction` | Current vs accumulated effect | theme_Energy_sum * memory_effect | Reinforcing patterns |
+
+## Time-Weighted Features
+
+| Feature | Description | Calculation Method | Significance |
+|---------|-------------|-------------------|--------------|
+| `theme_Energy_business_impact` | Business hours energy impact | theme_Energy_sum * business_hours_weight | Impact during working hours |
+| `theme_Energy_weekend_adjusted` | Weekend energy impact | theme_Energy_sum * weekend_weight | Impact during residential peak |
+| `theme_Energy_evening_impact` | Evening peak energy impact | theme_Energy_sum * evening_peak_weight | Impact during evening demand peak |
+| `theme_Energy_temporal_weighted` | Combined temporal impact | theme_Energy_sum * combined_weight | Overall temporally-weighted impact |
+
+*Features marked with asterisk (*) may be removed in feature selection due to high correlation with other features.

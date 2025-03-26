@@ -1,0 +1,10 @@
+Data split performed on: 2025-03-27 02:04:32.795178
+Split strategy: fully_random
+
+strategy: fully_random
+test_fraction: 0.2
+test_count: 26412
+training_count: 105160
+
+Training data: 105160 rows
+Testing data: 26412 rows

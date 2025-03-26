@@ -1,0 +1,25 @@
+{
+    "method": "kbest",
+    "features": [
+        "article_count",
+        "tone_negative_max",
+        "tone_positive_max",
+        "tone_volatility",
+        "political_crisis_indicator",
+        "economic_impact_indicator",
+        "hour",
+        "is_business_hours",
+        "hour_sin",
+        "hour_cos",
+        "temp_mean",
+        "temp_min",
+        "temp_max",
+        "dwpt_mean",
+        "rhum_mean",
+        "wdir_mean",
+        "wspd_mean",
+        "wspd_max",
+        "pres_mean",
+        "Unnamed: 0_mean"
+    ]
+}

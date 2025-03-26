@@ -40,6 +40,11 @@ theme_categories = THEME_CATEGORIES
 # Tone metrics to extract
 TONE_METRICS = ['tone', 'positive', 'negative', 'polarity', 'activity', 'self_ref']
 
+# Add feature engineering output path
+FEATURE_ENGINEERING_DIR = PATHS.get("FEATURE_ENGINEERING_DIR", 
+                                  os.path.join(os.path.dirname(OUTPUT_FILE_PATH), 
+                                               "../feature_engineering"))
+
 #==============================
 # DATA VALIDATION FUNCTIONS - NEW!
 #==============================
@@ -141,33 +146,29 @@ def convert_date(date_str):
     except:
         return None
 
+# Add to gkg_data_sparsing.py - modify parse_themes function
 def parse_themes(theme_str):
-    """Extract themes from V2Themes column"""
-    if pd.isna(theme_str):
-        return {}
-    
+    """Parse themes from GKG format with mention counting"""
     themes_dict = {}
-    themes = theme_str.split(';')
-    
-    for theme in themes:
-        if not theme:
-            continue
-        
-        parts = theme.split(',')
-        if len(parts) >= 1:
-            theme_name = parts[0].lower()
-            themes_dict[theme_name] = 1
-    
+    if isinstance(theme_str, str) and theme_str.strip():
+        themes = theme_str.split(';')
+        for theme in themes:
+            theme = theme.strip()
+            if theme:
+                # Count mentions, not just presence
+                themes_dict[theme] = themes_dict.get(theme, 0) + 1
     return themes_dict
 
+# Update the categorize_themes function to preserve counts instead of binary values
 def categorize_themes(themes_dict):
-    """Map individual themes to theme categories"""
+    """Map individual themes to theme categories with preserved counts"""
     categorized = {category: 0 for category in theme_categories}
     
-    for theme in themes_dict:
+    for theme, count in themes_dict.items():
         for category, keywords in theme_categories.items():
             if any(keyword.lower() in theme.lower() for keyword in keywords):
-                categorized[category] = 1
+                # ADD THE COUNT instead of just setting to 1
+                categorized[category] += count
                 break
     
     return categorized
@@ -437,11 +438,17 @@ def process_dataframe(df):
     df['parsed_themes'] = df['V2Themes'].apply(lambda x: parse_themes_cached(str(x)) if pd.notna(x) else {})
     df['theme_categories'] = df['parsed_themes'].apply(categorize_themes)
     
-    # Create columns for each theme category
+    # Create columns for each theme category - PRESERVE COUNTS
     for category in theme_categories:
         df[f'theme_{category}'] = df['theme_categories'].apply(
             lambda x: x.get(category, 0) if isinstance(x, dict) else 0
         )
+        
+        # Add normalized theme importance (new)
+        total_themes = df['theme_categories'].apply(
+            lambda x: sum(x.values()) if isinstance(x, dict) else 0
+        )
+        df[f'theme_{category}_importance'] = df[f'theme_{category}'] / total_themes.replace(0, 1)
     
     # Process tone metrics
     print("Processing tone metrics...")
@@ -510,7 +517,69 @@ def process_dataframe(df):
     print(f"Most positive: {df['tone_positive'].max()}")
     print(f"Most negative: {df['tone_negative'].max()}")
     
+    print("Extracting theme co-occurrences...")
+    df = extract_theme_cooccurrences(df)
+    
+    # Calculate theme dominance (which theme is most prominent in each article)
+    df['dominant_theme'] = df.apply(
+        lambda row: max(
+            [(category, row[f'theme_{category}']) for category in theme_categories],
+            key=lambda x: x[1]
+        )[0] if any(row[f'theme_{category}'] > 0 for category in theme_categories) else None,
+        axis=1
+    )
+
+    # Calculate dominance strength (how much stronger the dominant theme is)
+    for category in theme_categories:
+        mask = df['dominant_theme'] == category
+        other_themes = [c for c in theme_categories if c != category]
+        for idx, row in df[mask].iterrows():
+            if other_themes:
+                next_strongest = max([row[f'theme_{c}'] for c in other_themes])
+                df.at[idx, 'theme_dominance_strength'] = row[f'theme_{category}'] / (next_strongest + 1)
+
     return df
+
+# Add at the end of process_dataframe function
+def create_feature_documentation(df, output_dir):
+    """Create documentation for all features"""
+    doc_path = os.path.join(output_dir, "feature_documentation.md")
+    
+    with open(doc_path, 'w', encoding='utf-8') as f:
+        f.write("# GDELT Feature Documentation\n\n")
+        f.write(f"Generated: {datetime.now()}\n\n")
+        
+        f.write("## Theme Features\n\n")
+        theme_cols = [col for col in df.columns if col.startswith('theme_')]
+        f.write("| Feature | Description | Type | Range |\n")
+        f.write("|---------|-------------|------|-------|\n")
+        
+        for col in theme_cols:
+            desc = ""
+            if col.endswith('_importance'):
+                desc = "Relative importance of theme (normalized by total themes)"
+                type_info = "Float"
+                range_info = "0-1"
+            elif '_combo' in col:
+                themes = col.replace('_combo', '').split('_theme_')[1:]
+                desc = f"Co-occurrence of {' and '.join(themes)} themes"
+                type_info = "Binary"
+                range_info = "0-1"
+            elif col == 'dominant_theme':
+                desc = "Most prominent theme in article"
+                type_info = "Category"
+                range_info = f"{', '.join(theme_categories)}"
+            else:
+                desc = "Theme occurrence count"
+                type_info = "Integer"
+                range_info = f"0-{int(df[col].max())}"
+            
+            f.write(f"| {col} | {desc} | {type_info} | {range_info} |\n")
+        
+        # Add other feature groups...
+        
+    print(f"Feature documentation saved to {doc_path}")
+    return doc_path
 
 #==============================
 # IMPROVED MAIN PROCESSING FUNCTIONS
@@ -1114,6 +1183,50 @@ def generate_comprehensive_quality_report(file_path, output_dir, chunk_size=5000
         import traceback
         traceback.print_exc()
         return None
+
+# Add to gkg_data_sparsing.py
+def extract_theme_cooccurrences(df):
+    """Extract which themes appear together in the same articles"""
+    theme_cols = [col for col in df.columns if col.startswith('theme_')]
+    cooccurrence_counts = {}
+    
+    # Process each article
+    for _, row in df.iterrows():
+        # Get present themes (value > 0) - WITH TYPE CHECKING
+        present_themes = []
+        for col in theme_cols:
+            # Handle different data types safely
+            if isinstance(row[col], (int, float)) and row[col] > 0:
+                present_themes.append(col)
+            elif isinstance(row[col], dict) and sum(row[col].values()) > 0:
+                # If it's a dict, consider it present if any value is > 0
+                present_themes.append(col)
+        
+        # Record all pairwise co-occurrences
+        for i, theme1 in enumerate(present_themes):
+            for theme2 in present_themes[i+1:]:
+                pair = (theme1, theme2)
+                cooccurrence_counts[pair] = cooccurrence_counts.get(pair, 0) + 1
+    
+    # Create co-occurrence columns for the most common pairs
+    top_pairs = sorted(cooccurrence_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+    for (theme1, theme2), count in top_pairs:
+        combo_name = f"{theme1}_{theme2}_combo"
+        # Also handle possible dict values in the columns
+        df[combo_name] = df.apply(
+            lambda r: 1 if (is_theme_present(r[theme1]) and is_theme_present(r[theme2])) else 0,
+            axis=1
+        )
+    
+    return df
+
+def is_theme_present(value):
+    """Helper function to check if a theme is present, handling different data types"""
+    if isinstance(value, (int, float)):
+        return value > 0
+    elif isinstance(value, dict):
+        return sum(value.values()) > 0
+    return False
 
 # Main execution
 import argparse

@@ -1,0 +1,13 @@
+Data split performed on: 2025-03-27 02:04:29.210331
+Split strategy: month_based
+
+strategy: month_based_sampling
+
+Test months by year:
+  2021: ['October', 'November']
+  2022: ['October', 'November']
+  2023: ['May', 'August']
+  2024: ['February', 'October']
+
+Training data: 109189 rows
+Testing data: 22383 rows

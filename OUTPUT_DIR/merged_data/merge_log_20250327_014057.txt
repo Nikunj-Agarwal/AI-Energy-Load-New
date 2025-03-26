@@ -1,0 +1,54 @@
+2025-03-27 01:40:57,567 - INFO - Starting dataset merge process
+2025-03-27 01:40:57,568 - INFO - GKG data path: C:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\OUTPUT_DIR\aggregated_data\aggregated_gkg_15min.csv
+2025-03-27 01:40:57,568 - INFO - Weather data path: C:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\Weather_Energy\weather_energy_15min.csv
+2025-03-27 01:40:57,568 - INFO - Output path: C:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\OUTPUT_DIR\merged_data\merged_gkg_weather_energy.csv
+2025-03-27 01:40:57,568 - INFO - Loading C:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\OUTPUT_DIR\aggregated_data\aggregated_gkg_15min.csv...
+2025-03-27 01:40:58,026 - INFO - Successfully loaded 138432 rows and 43 columns
+2025-03-27 01:40:58,060 - INFO - Set index to 'time_bucket' with range: 2021-01-01 00:00:00 to 2024-12-12 23:45:00
+2025-03-27 01:40:58,060 - INFO - Loading C:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\Weather_Energy\weather_energy_15min.csv...
+2025-03-27 01:40:58,165 - INFO - Successfully loaded 131572 rows and 12 columns
+2025-03-27 01:40:58,194 - INFO - Set index to 'timestamp' with range: 2021-01-01 00:30:00 to 2024-12-12 00:30:00
+2025-03-27 01:40:58,194 - INFO - Merging datasets...
+2025-03-27 01:40:58,205 - INFO - Handling 1 duplicate column names
+2025-03-27 01:40:58,205 - INFO - Overlapping time range: 2021-01-01 00:30:00 to 2024-12-12 00:30:00
+2025-03-27 01:40:58,208 - INFO - GKG points in range: 138337
+2025-03-27 01:40:58,212 - INFO - Weather points in range: 131572
+2025-03-27 01:40:58,236 - INFO - Merged dataframe shape: (131572, 55)
+2025-03-27 01:40:58,236 - INFO - Retained 100.0% of data after merge
+2025-03-27 01:40:58,237 - INFO - Handling missing values...
+2025-03-27 01:40:58,244 - INFO - Found 1 columns with missing values:
+2025-03-27 01:40:58,245 - INFO -   wdir_mean: 180 missing values (0.14%)
+2025-03-27 01:40:58,261 - INFO - Successfully handled all missing values
+2025-03-27 01:40:58,261 - INFO - Optimizing memory usage...
+2025-03-27 01:40:58,357 - INFO - Memory usage reduced from 56.21 MB to 33.13 MB (41.1% reduction)
+2025-03-27 01:41:01,173 - INFO - Merged data saved to C:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\OUTPUT_DIR\merged_data\merged_gkg_weather_energy.csv
+2025-03-27 01:41:01,173 - INFO - Creating merge verification visualizations...
+2025-03-27 01:41:01,174 - INFO - Using 'Power demand_sum' as energy column for visualization
+2025-03-27 01:41:01,305 - ERROR - Error in main process: 'datetime'
+Traceback (most recent call last):
+  File "C:\Users\nikun\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'datetime'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\Correlation_and_preprocessing\merge.py", line 352, in main
+    merged_df = merge_datasets(gkg_df, weather_df, output_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\Correlation_and_preprocessing\merge.py", line 214, in merge_datasets
+    create_merge_visualization(merged_df)
+  File "c:\Users\nikun\Desktop\MLPR\AI-Energy-Load-New\Correlation_and_preprocessing\merge.py", line 248, in create_merge_visualization
+    plt.plot(sample['datetime'], sample[energy_col], 'b-', label=energy_col)
+             ~~~~~~^^^^^^^^^^^^
+  File "C:\Users\nikun\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nikun\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'datetime'

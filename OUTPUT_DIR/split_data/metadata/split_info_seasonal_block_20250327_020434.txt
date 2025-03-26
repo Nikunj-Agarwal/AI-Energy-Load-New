@@ -1,0 +1,13 @@
+Data split performed on: 2025-03-27 02:04:36.660127
+Split strategy: seasonal_block
+
+strategy: seasonal_block
+
+Test seasons by year:
+  2021: {'Winter': 1644, 'Spring': 1656, 'Summer': 1702, 'Fall': 1624}
+  2022: {'Winter': 1667, 'Spring': 1587, 'Summer': 1657, 'Fall': 1622}
+  2023: {'Winter': 1714, 'Spring': 1674, 'Summer': 1741, 'Fall': 1717}
+  2024: {'Winter': 1663, 'Spring': 1272, 'Summer': 1661, 'Fall': 1707}
+
+Training data: 105264 rows
+Testing data: 26308 rows
